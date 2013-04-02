@@ -1,39 +1,65 @@
-class Renderer
-
 class Graph
-  constructor: ->
+  constructor: (@options={}) ->
+    @options.height ?= 200
+    @options.interval ?= 100
+    @options.extraStyles ?= ''
+
     @points = []
   
   add: (vals...) ->
     @points.push.apply @points, vals
+
+    @renderIfWatching()
     
+  watch: (opts) ->
+    @watching = true
+
+  stop: ->
+    @watching = false
+    clearTimeout @timeout
+
+  renderIfWatching: ->
+    if @watching
+      if not @lastRender?
+        timeToNext = 0
+      else
+        timeSinceLast = +(new Date) - @lastRender
+        timeToNext = @options.interval - timeSinceLast
+
+      @timeout = setTimeout =>
+        @render()
+      , Math.max(timeToNext, 0)
+
   render: ->
+    @lastRender = +(new Date)
 
 class BarGraph extends Graph
   constructor: (@options={}) ->
     super
 
-    @options.resolution ?= 1
-    @options.height ?= 200
-    @options.extraStyles ?= ''
+    @options.barWidth ?= 3
 
   _inspectorHeight: ->
-    window.outerHeight - window.innerHeight - 180
+    window.outerHeight - window.innerHeight - @options.height
 
   render: ->
+    super
+
     inspectorHeight = @_inspectorHeight()
     inspectorWidth = window.innerWidth
-
+    
+    # Shift the graph down
     console.log "%c ", "font-size: #{ inspectorHeight }px"
-    console.log "%c ", "padding-bottom: #{ @options.height }px"
 
-    steps = inspectorWidth / @options.resolution
+    # Allocate enough space for the height
+    console.log "%c ", "padding-bottom: #{ @options.height + @options.barWidth }px"
+
+    steps = inspectorWidth / @options.barWidth
 
     xScaling = Math.min(steps / @points.length, 1)
 
     pointMax = Math.max @points...
     yScaling = pointMax / @options.height
-    console.log pointMax, @options.height, yScaling
 
     spaces = ""
     styles = []
@@ -42,23 +68,26 @@ class BarGraph extends Graph
 
       spaces += "%c "
 
-      styles.push "font-size: #{ @options.resolution }px; background-color: blue; padding-bottom: #{ point / yScaling }px; #{ @options.extraStyles }"
+      # We need to shift the points down by the bar width, as we're setting the width with the font size, so the entire block will extend
+      # barWidth over the bottom of the text line.  We can't hide the text line, so we'll use it to represent the max.
+      height = (point / yScaling) + @options.barWidth
+
+      styles.push "font-size: #{ @options.barWidth }px; background-color: #444; padding-bottom: #{ height }px; #{ @options.extraStyles }"
+
+    @options.step?()
 
     console.log spaces, styles...
 
-graph = new BarGraph
-  extraStyles: 'text-shadow: 1px 1px 1px grey; border: 1px solid #CCC'
 
-last = 500
-j = 0
-intv = setInterval ->
-  j++
+window.console.graph = (options) ->
+  graph = new BarGraph options
 
-  last = Math.min(1000, Math.max(0, Math.floor(last + (Math.random() * 300 - 150))))
-  graph.add last
+  if options.points?
+    graph.add options.points...
+
   graph.render()
 
-  if j >= 2000
-    clearInterval intv
-, 100
+  graph
 
+console.graph.Graph = Graph
+console.graph.BarGraph = BarGraph

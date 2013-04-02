@@ -3,6 +3,8 @@ console.graph
 
 Graph in the Chrome console.
 
+[Demo](http://zackbloom.github.com/console.graph)
+
 Overview
 --------
 
@@ -23,7 +25,7 @@ Usage
   - `extraStyles` - Additional CSS you wish to apply to the graph elements.  Note that
       most block-level CSS is not accepted.
 
-  Returns a `BarGraph` object which has the methods:
+Returns a `BarGraph` object which has the methods:
 
   - `add(point1, point2, ...)` - Adds one or more points.  Rescaling is handled 
       automatically to fit in the console.

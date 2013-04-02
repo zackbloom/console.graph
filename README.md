@@ -21,7 +21,7 @@ Usage
   - `barWidth` - The resolution of the bar chart.  Higher numbers will result in
       more performant graphing.
   - `height` - The height in the console of the graph.
-  - `interval` - The maximum rendering framerate when in watch-mode.
+  - `interval` - The maximum rendering interval when in watch-mode.
   - `extraStyles` - Additional CSS you wish to apply to the graph elements.  Note that
       most block-level CSS is not accepted.
 

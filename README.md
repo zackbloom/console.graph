@@ -22,6 +22,8 @@ Usage
       more performant graphing.
   - `height` - The height in the console of the graph.
   - `interval` - The maximum rendering interval when in watch-mode.
+  - `step` - A function which will be called just before the graph is rendered.  Useful if you have additional
+      logging which you don't want to be clobbered by the graph.
   - `extraStyles` - Additional CSS you wish to apply to the graph elements.  Note that
       most block-level CSS is not accepted.
 

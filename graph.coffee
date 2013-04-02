@@ -10,7 +10,12 @@ class Graph
     @points.push.apply @points, vals
 
     @renderIfWatching()
-    
+  
+  clear: ->
+    @points = []
+
+    @renderIfWatching()
+
   watch: (opts) ->
     @watching = true
 

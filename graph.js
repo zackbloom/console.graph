@@ -29,6 +29,11 @@
       return this.renderIfWatching();
     };
 
+    Graph.prototype.clear = function() {
+      this.points = [];
+      return this.renderIfWatching();
+    };
+
     Graph.prototype.watch = function(opts) {
       return this.watching = true;
     };
